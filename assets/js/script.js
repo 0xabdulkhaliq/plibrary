@@ -1,6 +1,6 @@
 // Book Class
 class Book {
-    constructor(title, author, pages, status){
+    constructor(title, author, pages, status) {
         this.title = title;
         this.author = author;
         this.pages = pages;
@@ -14,7 +14,7 @@ class Store {
     static getBooks() {
         let books;
         localStorage.getItem('books') === null ? books = [] : books = JSON.parse(localStorage.getItem('books'));
-        
+
         return books;
     }
 
@@ -30,15 +30,15 @@ class Store {
     static removeBook(bookTitle) {
         const books = Store.getBooks();
 
-        books.forEach((book, index) => { book.title === bookTitle ? books.splice(index, 1) : books});
+        books.forEach((book, index) => { book.title === bookTitle ? books.splice(index, 1) : books });
         localStorage.setItem('books', JSON.stringify(books));
     }
 
     static updateBookStatus(bookTitle, status) {
         const books = Store.getBooks();
 
-        books.forEach((book) => { 
-            if(book.title !== bookTitle) return;
+        books.forEach((book) => {
+            if (book.title !== bookTitle) return;
             book.status = status;
         });
 
@@ -54,12 +54,12 @@ class UI {
 
         const books = Store.getBooks()
         UI.usageTip();
-        books.forEach((book)=> UI.addBookToLibrary(book));
+        books.forEach((book) => UI.addBookToLibrary(book));
     }
 
-    static activateBtn(){
-        function removeTransition(e){   // Function with (e)event info as argument.
-            if(e.propertyName !== 'transform') return; // if
+    static activateBtn() {
+        function removeTransition(e) {   // Function with (e)event info as argument.
+            if (e.propertyName !== 'transform') return; // if
             e.target.classList.remove('clicked');      // else
         }
 
@@ -67,23 +67,23 @@ class UI {
         actionBtns.forEach(btn => btn.addEventListener('transitionend', removeTransition));
     }
 
-    static usageTip(){
+    static usageTip() {
         const main = document.querySelector('main');
         const usageTipPrompt = document.querySelector('.usage-tip');
 
-        if(main.children.length !== 0) {
+        if (main.children.length !== 0) {
             main.classList.add('usage-tip-active');
             usageTipPrompt.classList.add('animated', 'spaceInLeft');
             usageTipPrompt.classList.remove('disabled');
 
-        } if(main.children.length > 1 ) {
+        } if (main.children.length > 1) {
             main.classList.remove('usage-tip-active');
             usageTipPrompt.classList.remove('spaceInLeft');
             usageTipPrompt.classList.add('disabled');
         }
     }
 
-    static tryBooks(){
+    static tryBooks() {
         const sampleBooks = [
             {
                 title: 'Intelligent Design',
@@ -110,32 +110,34 @@ class UI {
                 status: false
             }
         ]
-        const books = sampleBooks; 
+        const books = sampleBooks;
 
-        setTimeout(()=>{books.forEach((book)=> {
-            UI.addBookToLibrary(book); 
-            Store.addBook(book)});
+        setTimeout(() => {
+            books.forEach((book) => {
+                UI.addBookToLibrary(book);
+                Store.addBook(book)
+            });
         }, 200);
     }
 
-    static addBookToLibrary(book){
+    static addBookToLibrary(book) {
         const librarySection = document.querySelector('main');
-             
+
         const bookCard = document.createElement('div');
         bookCard.classList.add('book-card', 'animated', 'vanishIn');
 
-        if(book.status === true){ 
-            book.status = 'Read'; 
+        if (book.status === true) {
+            book.status = 'Read';
             book.process = 'success';
             book.summary = 'Completed';
         }
-        else { 
-            book.status = 'Not read'; 
-            book.process = 'failure'; 
+        else {
+            book.status = 'Not read';
+            book.process = 'failure';
             book.summary = 'On progress';
         };
 
-        bookCard.innerHTML =  `
+        bookCard.innerHTML = `
         <div class="description">
             <h2>${book.title}</h2>
             <h3>by ${book.author}</h3>
@@ -152,20 +154,20 @@ class UI {
         UI.activateBtn();
         UI.usageTip();
 
-        setTimeout(()=>{bookCard.classList.remove('vanishIn');}, 2000);
+        setTimeout(() => { bookCard.classList.remove('vanishIn'); }, 2000);
     }
 
-    static removeBook(element){
-       if(!element.classList.contains('delete')) return;
-       element.classList.add('clicked');
-       setTimeout(()=>{element.parentElement.parentElement.classList.add('vanishOut');}, 500)
-       setTimeout(()=>{element.parentElement.parentElement.remove(); UI.usageTip();}, 1000);
-       const bookTitle = element.parentElement.parentElement.children[0].children[0].textContent;
+    static removeBook(element) {
+        if (!element.classList.contains('delete')) return;
+        element.classList.add('clicked');
+        setTimeout(() => { element.parentElement.parentElement.classList.add('vanishOut'); }, 500)
+        setTimeout(() => { element.parentElement.parentElement.remove(); UI.usageTip(); }, 1000);
+        const bookTitle = element.parentElement.parentElement.children[0].children[0].textContent;
 
-       Store.removeBook(bookTitle);
+        Store.removeBook(bookTitle);
     }
 
-    static clearFields(){
+    static clearFields() {
         const form = document.querySelectorAll('input');
         form.forEach(el => el.type != 'checkbox' ? el.value = '' : el.checked = false);
     }
@@ -173,19 +175,19 @@ class UI {
     static updateBook(element) {
         const bookTitle = element.parentElement.parentElement.children[0].children[0].textContent;
 
-        if(!element.classList.contains('read-status')) return;
+        if (!element.classList.contains('read-status')) return;
         element.classList.add('clicked');
 
-        if(element.classList.contains('read-status') && element.textContent == 'Not read'){
-            element.textContent = 'Read'; 
+        if (element.classList.contains('read-status') && element.textContent == 'Not read') {
+            element.textContent = 'Read';
             element.parentElement.parentElement.children[2].textContent = 'Completed';
             element.classList.add('success')
             element.classList.remove('failure');
 
             Store.updateBookStatus(bookTitle, true);
-    
+
         }
-        else if (element.classList.contains('read-status') &&  element.textContent == 'Read'){
+        else if (element.classList.contains('read-status') && element.textContent == 'Read') {
             element.textContent = 'Not read';
             element.parentElement.parentElement.children[2].textContent = 'On progress';
             element.classList.add('failure')
@@ -200,22 +202,22 @@ class UI {
 document.addEventListener('DOMContentLoaded', UI.displayBooks);
 
 // Event: Add Books to Library
-document.querySelector('#book-form').addEventListener('submit', (e)=>{
+document.querySelector('#book-form').addEventListener('submit', (e) => {
     e.preventDefault();
 
     // Get form values 
     const title = document.querySelector('#title').value,
-          author = document.querySelector('#author').value,
-          pages = document.querySelector('#pages').value,
-          submitBtn = document.querySelector('.submit-btn'),
-          status = document.querySelector('.read-status-determiner').checked;
+        author = document.querySelector('#author').value,
+        pages = document.querySelector('#pages').value,
+        submitBtn = document.querySelector('.submit-btn'),
+        status = document.querySelector('.read-status-determiner').checked;
 
     submitBtn.classList.add('clicked');
 
     // Unchecks the checkbox for close the add-book panel
-     document.querySelector("#togglerCheckbox").checked = false; 
+    document.querySelector("#togglerCheckbox").checked = false;
 
-    setTimeout(()=>{
+    setTimeout(() => {
         const book = new Book(title, author, pages, status);
         UI.addBookToLibrary(book);
         Store.addBook(book);
@@ -225,6 +227,6 @@ document.querySelector('#book-form').addEventListener('submit', (e)=>{
 });
 
 // Event: Updating Book's status
-document.querySelector('main').addEventListener('click', (e)=>{UI.removeBook(e.target); UI.updateBook(e.target)});
+document.querySelector('main').addEventListener('click', (e) => { UI.removeBook(e.target); UI.updateBook(e.target) });
 
-document.querySelector('.try-books').addEventListener('click', (e)=>{UI.tryBooks();});
+document.querySelector('.try-books').addEventListener('click', (e) => { UI.tryBooks(); });
